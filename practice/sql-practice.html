@@ -4,9 +4,261 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>SQL Practice | CareerLab AI</title>
+    <title>SQL Practice - CareerLab AI</title>
 
     <link rel="stylesheet" href="../style.css">
+
+    <!-- SQL Engine -->
+    <script src="https://cdn.jsdelivr.net/npm/alasql@4.5.0/dist/alasql.min.js"></script>
+
+    <style>
+        .sql-page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 20px 80px;
+        }
+
+        .sql-hero {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .sql-hero .eyebrow {
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .sql-hero h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        .sql-hero h1 span {
+            color: #6c63ff;
+        }
+
+        .sql-hero p {
+            max-width: 700px;
+            margin: auto;
+            opacity: .75;
+        }
+
+        .practice-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .topic-panel,
+        .question-panel,
+        .editor-panel,
+        .result-panel {
+            background: #fff;
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: 0 8px 30px rgba(0,0,0,.08);
+        }
+
+        .topic-panel h3,
+        .question-panel h3,
+        .editor-panel h3,
+        .result-panel h3 {
+            margin-top: 0;
+        }
+
+        .topic-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .topic-btn {
+            width: 100%;
+            text-align: left;
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            background: #fafafa;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: .2s;
+        }
+
+        .topic-btn:hover {
+            border-color: #6c63ff;
+        }
+
+        .topic-btn.active {
+            background: #6c63ff;
+            color: white;
+            border-color: #6c63ff;
+        }
+
+        .practice-main {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .question-number {
+            color: #6c63ff;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        .table-info {
+            background: #f6f7fb;
+            border-radius: 10px;
+            padding: 14px;
+            font-family: monospace;
+            font-size: 13px;
+            overflow-x: auto;
+        }
+
+        .sql-editor {
+            width: 100%;
+            min-height: 230px;
+            box-sizing: border-box;
+            resize: vertical;
+            background: #111827;
+            color: #e5e7eb;
+            border: 1px solid #374151;
+            border-radius: 12px;
+            padding: 18px;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            outline: none;
+        }
+
+        .sql-editor:focus {
+            border-color: #6c63ff;
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .sql-btn {
+            border: none;
+            border-radius: 9px;
+            padding: 11px 18px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .run-btn {
+            background: #6c63ff;
+            color: white;
+        }
+
+        .clear-btn {
+            background: #eee;
+            color: #222;
+        }
+
+        .next-btn {
+            background: #111827;
+            color: white;
+        }
+
+        .result-box {
+            min-height: 80px;
+            overflow-x: auto;
+        }
+
+        .success-message {
+            color: #16803c;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .error-message {
+            color: #c62828;
+            font-weight: 600;
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 14px;
+        }
+
+        .result-table th,
+        .result-table td {
+            border: 1px solid #ddd;
+            padding: 9px 10px;
+            text-align: left;
+        }
+
+        .result-table th {
+            background: #f1f2f6;
+        }
+
+        .progress-bar {
+            height: 7px;
+            background: #eee;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 10%;
+            background: #6c63ff;
+            transition: width .3s;
+        }
+
+        .hint {
+            margin-top: 12px;
+            padding: 12px;
+            background: #fff8e1;
+            border-radius: 9px;
+            font-size: 14px;
+            display: none;
+        }
+
+        @media (max-width: 850px) {
+            .practice-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sql-hero h1 {
+                font-size: 32px;
+            }
+
+            .topic-list {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 550px) {
+            .topic-list {
+                grid-template-columns: 1fr;
+            }
+
+            .sql-page {
+                padding: 30px 12px 60px;
+            }
+
+            .sql-hero h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -33,206 +285,178 @@
 </header>
 
 
-<main>
+<main class="sql-page">
 
-    <!-- HERO -->
+    <section class="sql-hero">
 
-    <section class="hero">
+        <span class="eyebrow">SQL Practice Lab</span>
 
-        <div class="hero-copy">
-
-            <span class="eyebrow">SQL Practice</span>
-
-            <h1>
-                Practice SQL.
-                <span>Build Confidence.</span>
-            </h1>
-
-            <p>
-                Solve real-world SQL problems from Basic
-                to Advanced level.
-            </p>
-
-        </div>
-
-    </section>
-
-
-    <!-- PRACTICE AREA -->
-
-    <section class="section">
-
-        <h2>SQL Practice Questions</h2>
+        <h1>
+            Practice SQL
+            <span>Step by Step.</span>
+        </h1>
 
         <p>
-            Select a difficulty level and start solving SQL problems.
+            Solve real-world SQL problems from Basic to Advanced level.
+            Write your query, run it and instantly see the result.
         </p>
-
-
-        <div class="cards">
-
-            <!-- BASIC -->
-
-            <div class="card">
-
-                <span class="eyebrow">Level 1</span>
-
-                <h3>SQL Basics</h3>
-
-                <p>
-                    SELECT, WHERE, DISTINCT, ORDER BY,
-                    LIMIT and basic filtering.
-                </p>
-
-                <a href="#" class="btn primary">
-                    Start Level 1
-                </a>
-
-            </div>
-
-
-            <!-- INTERMEDIATE -->
-
-            <div class="card">
-
-                <span class="eyebrow">Level 2</span>
-
-                <h3>Intermediate SQL</h3>
-
-                <p>
-                    Aggregate functions, GROUP BY,
-                    HAVING, CASE and JOINs.
-                </p>
-
-                <a href="#" class="btn primary">
-                    Start Level 2
-                </a>
-
-            </div>
-
-
-            <!-- ADVANCED -->
-
-            <div class="card">
-
-                <span class="eyebrow">Level 3</span>
-
-                <h3>Advanced SQL</h3>
-
-                <p>
-                    Subqueries, CTEs, Window Functions,
-                    EXISTS, UNION and advanced analysis.
-                </p>
-
-                <a href="#" class="btn primary">
-                    Start Level 3
-                </a>
-
-            </div>
-
-
-            <!-- INTERVIEW -->
-
-            <div class="card">
-
-                <span class="eyebrow">Interview</span>
-
-                <h3>SQL Interview Practice</h3>
-
-                <p>
-                    Solve real-world Data Analyst
-                    interview questions.
-                </p>
-
-                <a href="#" class="btn primary">
-                    Start Interview
-                </a>
-
-            </div>
-
-        </div>
 
     </section>
 
 
-    <!-- TOPICS -->
+    <section class="practice-layout">
 
-    <section class="section">
+        <!-- TOPICS -->
 
-        <h2>Topics Covered</h2>
+        <aside class="topic-panel">
 
-        <div class="cards">
+            <h3>SQL Topics</h3>
 
-            <div class="card">
-                <h3>01. SELECT & Filtering</h3>
-                <p>
-                    SELECT, DISTINCT, WHERE and conditions.
-                </p>
+            <div class="topic-list">
+
+                <button class="topic-btn active" onclick="selectTopic(0)">
+                    01. SQL Basics
+                </button>
+
+                <button class="topic-btn" onclick="selectTopic(1)">
+                    02. Aggregates
+                </button>
+
+                <button class="topic-btn" onclick="selectTopic(2)">
+                    03. JOINs
+                </button>
+
+                <button class="topic-btn" onclick="selectTopic(3)">
+                    04. CASE
+                </button>
+
+                <button class="topic-btn" onclick="selectTopic(4)">
+                    05. Subqueries
+                </button>
+
+                <button class="topic-btn" onclick="selectTopic(5)">
+                    06. CTE
+                </button>
+
+                <button class="topic-btn" onclick="selectTopic(6)">
+                    07. Window Functions
+                </button>
+
+                <button class="topic-btn" onclick="selectTopic(7)">
+                    08. Date & Time
+                </button>
+
+                <button class="topic-btn" onclick="selectTopic(8)">
+                    09. Advanced SQL
+                </button>
+
+                <button class="topic-btn" onclick="selectTopic(9)">
+                    10. Interview
+                </button>
+
             </div>
 
-            <div class="card">
-                <h3>02. Aggregate Functions</h3>
-                <p>
-                    COUNT, SUM, AVG, MIN and MAX.
-                </p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
             </div>
 
-            <div class="card">
-                <h3>03. JOINs</h3>
-                <p>
-                    INNER, LEFT, RIGHT and SELF JOIN.
-                </p>
+            <p id="progressText">
+                Question 1
+            </p>
+
+        </aside>
+
+
+        <!-- MAIN PRACTICE -->
+
+        <div class="practice-main">
+
+            <!-- QUESTION -->
+
+            <div class="question-panel">
+
+                <div class="question-number" id="questionNumber">
+                    Question 1
+                </div>
+
+                <h3 id="topicTitle">
+                    SQL Basics
+                </h3>
+
+                <div class="question-text" id="questionText">
+                    Find all customers from the city of Bengaluru.
+                </div>
+
+                <div class="table-info">
+                    <strong>Table:</strong> customers
+                    <br><br>
+                    customer_id | customer_name | city | age
+                    <br>
+                    1 | Rahul | Bengaluru | 24
+                    <br>
+                    2 | Priya | Delhi | 27
+                    <br>
+                    3 | Amit | Bengaluru | 31
+                </div>
+
+                <button class="sql-btn clear-btn"
+                        onclick="showHint()"
+                        style="margin-top:15px;">
+                    💡 Show Hint
+                </button>
+
+                <div class="hint" id="hintBox">
+                    Use <strong>SELECT</strong> with a
+                    <strong>WHERE</strong> condition.
+                </div>
+
             </div>
 
-            <div class="card">
-                <h3>04. CASE</h3>
-                <p>
-                    Conditional logic and classifications.
-                </p>
+
+            <!-- EDITOR -->
+
+            <div class="editor-panel">
+
+                <h3>SQL Editor</h3>
+
+                <textarea
+                    id="sqlEditor"
+                    class="sql-editor"
+                    spellcheck="false"
+                    placeholder="Write your SQL query here...">SELECT * FROM customers WHERE city = 'Bengaluru';</textarea>
+
+                <div class="editor-actions">
+
+                    <button class="sql-btn run-btn"
+                            onclick="runSQL()">
+                        ▶ Run Query
+                    </button>
+
+                    <button class="sql-btn clear-btn"
+                            onclick="clearEditor()">
+                        Clear
+                    </button>
+
+                    <button class="sql-btn next-btn"
+                            onclick="nextQuestion()">
+                        Next Question →
+                    </button>
+
+                </div>
+
             </div>
 
-            <div class="card">
-                <h3>05. Subqueries</h3>
-                <p>
-                    Nested and correlated subqueries.
-                </p>
-            </div>
 
-            <div class="card">
-                <h3>06. CTE</h3>
-                <p>
-                    Multi-step SQL analysis using CTEs.
-                </p>
-            </div>
+            <!-- RESULT -->
 
-            <div class="card">
-                <h3>07. Window Functions</h3>
-                <p>
-                    RANK, DENSE_RANK, ROW_NUMBER,
-                    LAG and LEAD.
-                </p>
-            </div>
+            <div class="result-panel">
 
-            <div class="card">
-                <h3>08. Date & Time</h3>
-                <p>
-                    Date calculations and time-based analysis.
-                </p>
-            </div>
+                <h3>Query Result</h3>
 
-            <div class="card">
-                <h3>09. Advanced SQL</h3>
-                <p>
-                    EXISTS, UNION, Views, Transactions
-                    and performance.
-                </p>
-            </div>
+                <div class="result-box" id="resultBox">
+                    Run your query to see the result here.
+                </div>
 
-            <div class="card">
-                <h3>10. Business Problems</h3>
-                <p>
-                    Real-world Data Analyst SQL scenarios.
-                </p>
             </div>
 
         </div>
@@ -246,6 +470,341 @@
     <p>© 2026 CareerLab AI. Build Skills. Build Career.</p>
 </footer>
 
+
+<script>
+
+/* =========================================================
+   SAMPLE DATABASE
+   ========================================================= */
+
+alasql(`
+    CREATE TABLE customers (
+        customer_id INT,
+        customer_name STRING,
+        city STRING,
+        age INT
+    )
+`);
+
+alasql(`
+    INSERT INTO customers VALUES
+    (1, 'Rahul', 'Bengaluru', 24),
+    (2, 'Priya', 'Delhi', 27),
+    (3, 'Amit', 'Bengaluru', 31),
+    (4, 'Neha', 'Mumbai', 25),
+    (5, 'Rohit', 'Pune', 29)
+`);
+
+
+/* =========================================================
+   QUESTIONS
+   ========================================================= */
+
+const questions = [
+
+    {
+        topic: "SQL Basics",
+        question: "Find all customers from the city of Bengaluru.",
+        answer:
+            "SELECT * FROM customers WHERE city = 'Bengaluru';",
+        hint:
+            "Use SELECT with a WHERE condition."
+    },
+
+    {
+        topic: "Aggregates",
+        question: "Find the total number of customers.",
+        answer:
+            "SELECT COUNT(*) AS total_customers FROM customers;",
+        hint:
+            "Use COUNT(*) to count rows."
+    },
+
+    {
+        topic: "JOINs",
+        question: "This section will contain JOIN based business questions.",
+        answer:
+            "SELECT * FROM customers;",
+        hint:
+            "JOIN questions will be added with multiple sample tables."
+    },
+
+    {
+        topic: "CASE",
+        question: "Classify customers as 'Young' if age is below 30, otherwise 'Adult'.",
+        answer:
+            "SELECT customer_name, age, CASE WHEN age < 30 THEN 'Young' ELSE 'Adult' END AS category FROM customers;",
+        hint:
+            "Use CASE WHEN ... THEN ... ELSE ... END."
+    },
+
+    {
+        topic: "Subqueries",
+        question: "Find customers whose age is greater than the average customer age.",
+        answer:
+            "SELECT * FROM customers WHERE age > (SELECT AVG(age) FROM customers);",
+        hint:
+            "Use AVG() inside a subquery."
+    },
+
+    {
+        topic: "CTE",
+        question: "Use a CTE to calculate the average customer age.",
+        answer:
+            "WITH avg_age AS (SELECT AVG(age) AS average_age FROM customers) SELECT * FROM avg_age;",
+        hint:
+            "Start with WITH and create a temporary result."
+    },
+
+    {
+        topic: "Window Functions",
+        question: "Create a row number for every customer ordered by age.",
+        answer:
+            "SELECT customer_name, age, ROW_NUMBER() OVER (ORDER BY age) AS row_num FROM customers;",
+        hint:
+            "Use ROW_NUMBER() OVER (ORDER BY age)."
+    },
+
+    {
+        topic: "Date & Time",
+        question: "Date and time based SQL questions will be added here.",
+        answer:
+            "SELECT * FROM customers;",
+        hint:
+            "Date functions will be practiced with an orders table."
+    },
+
+    {
+        topic: "Advanced SQL",
+        question: "Find customers whose age is greater than 25.",
+        answer:
+            "SELECT * FROM customers WHERE age > 25;",
+        hint:
+            "Use a WHERE condition."
+    },
+
+    {
+        topic: "Interview Practice",
+        question: "Find the oldest customer.",
+        answer:
+            "SELECT * FROM customers ORDER BY age DESC LIMIT 1;",
+        hint:
+            "Sort age from highest to lowest and return one row."
+    }
+
+];
+
+let currentQuestion = 0;
+
+
+/* =========================================================
+   LOAD QUESTION
+   ========================================================= */
+
+function loadQuestion() {
+
+    const q = questions[currentQuestion];
+
+    document.getElementById("questionNumber").textContent =
+        "Question " + (currentQuestion + 1);
+
+    document.getElementById("topicTitle").textContent =
+        q.topic;
+
+    document.getElementById("questionText").textContent =
+        q.question;
+
+    document.getElementById("hintBox").innerHTML =
+        q.hint;
+
+    document.getElementById("hintBox").style.display =
+        "none";
+
+    document.getElementById("progressText").textContent =
+        "Question " + (currentQuestion + 1) +
+        " of " + questions.length;
+
+    document.getElementById("progressFill").style.width =
+        ((currentQuestion + 1) / questions.length * 100) + "%";
+
+    document.getElementById("resultBox").innerHTML =
+        "Run your query to see the result here.";
+
+    document.getElementById("sqlEditor").value =
+        "";
+
+    document.querySelectorAll(".topic-btn").forEach((btn, index) => {
+        btn.classList.toggle("active", index === currentQuestion);
+    });
+}
+
+
+/* =========================================================
+   SELECT TOPIC
+   ========================================================= */
+
+function selectTopic(index) {
+
+    currentQuestion = index;
+
+    loadQuestion();
+}
+
+
+/* =========================================================
+   RUN SQL
+   ========================================================= */
+
+function runSQL() {
+
+    const query =
+        document.getElementById("sqlEditor").value.trim();
+
+    const resultBox =
+        document.getElementById("resultBox");
+
+    if (!query) {
+
+        resultBox.innerHTML =
+            '<div class="error-message">Please write a SQL query first.</div>';
+
+        return;
+    }
+
+    try {
+
+        const result = alasql(query);
+
+        if (!Array.isArray(result)) {
+
+            resultBox.innerHTML =
+                '<div class="success-message">✓ Query executed successfully.</div>';
+
+            return;
+        }
+
+        if (result.length === 0) {
+
+            resultBox.innerHTML =
+                '<div class="success-message">✓ Query executed successfully.</div>' +
+                '<p>No rows returned.</p>';
+
+            return;
+        }
+
+        const columns =
+            Object.keys(result[0]);
+
+        let html =
+            '<div class="success-message">✓ Query executed successfully.</div>';
+
+        html += '<table class="result-table"><thead><tr>';
+
+        columns.forEach(column => {
+            html += `<th>${column}</th>`;
+        });
+
+        html += '</tr></thead><tbody>';
+
+        result.forEach(row => {
+
+            html += '<tr>';
+
+            columns.forEach(column => {
+
+                html += `<td>${row[column] ?? ''}</td>`;
+
+            });
+
+            html += '</tr>';
+
+        });
+
+        html += '</tbody></table>';
+
+        resultBox.innerHTML = html;
+
+    } catch (error) {
+
+        resultBox.innerHTML =
+            '<div class="error-message">' +
+            '❌ SQL Error: ' +
+            error.message +
+            '</div>';
+
+    }
+}
+
+
+/* =========================================================
+   CLEAR EDITOR
+   ========================================================= */
+
+function clearEditor() {
+
+    document.getElementById("sqlEditor").value = "";
+
+    document.getElementById("resultBox").innerHTML =
+        "Run your query to see the result here.";
+}
+
+
+/* =========================================================
+   NEXT QUESTION
+   ========================================================= */
+
+function nextQuestion() {
+
+    if (currentQuestion < questions.length - 1) {
+
+        currentQuestion++;
+
+        loadQuestion();
+
+    } else {
+
+        document.getElementById("resultBox").innerHTML =
+            '<div class="success-message">' +
+            '🎉 You completed all current SQL questions!' +
+            '</div>';
+
+    }
+
+}
+
+
+/* =========================================================
+   HINT
+   ========================================================= */
+
+function showHint() {
+
+    document.getElementById("hintBox").style.display =
+        "block";
+
+}
+
+
+/* =========================================================
+   KEYBOARD SHORTCUT
+   ========================================================= */
+
+document.getElementById("sqlEditor").addEventListener(
+    "keydown",
+    function(event) {
+
+        if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+
+            event.preventDefault();
+
+            runSQL();
+
+        }
+
+    }
+);
+
+</script>
 
 </body>
 </html>
